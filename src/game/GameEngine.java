@@ -53,8 +53,8 @@ public class GameEngine {
         // create players here
 
         //listPlayersRemainingGame.add(new ManualPlayer("Manual Player"));
-        addSimpleNPCs(4);
-        addRandomNPCs(0);
+        addSimpleNPCs(0);
+        addRandomNPCs(1000);
         addTempPlayers(0);
         Collections.shuffle(listPlayersRemainingGame);
 
@@ -122,12 +122,10 @@ public class GameEngine {
         boolean activeBet = false;
 
         int playersWithAction = 0;
-        int playersRemainingInRound = 0;
 
         for(Player tempPlayer: listPlayersRemainingRound) {
             if(!tempPlayer.isFold() && !tempPlayer.isAllIn()) {
                 playersWithAction++;
-                playersRemainingInRound++; 
             }
         }
 
@@ -137,10 +135,6 @@ public class GameEngine {
 
         while(!phaseComplete) {
             List<Player> listPlayersToRemoveFromRound = new ArrayList<>();
-
-            if(listPlayersRemainingRound.size() == 0) {
-                System.out.println("listPlayersRemainingRound" + listPlayersRemainingRound.size());
-            }
 
             for(Player tempPlayer: new ArrayList<>(listPlayersRemainingRound)) {
 
@@ -156,8 +150,10 @@ public class GameEngine {
                 sleep(gameSpeed);
                 System.out.println("Current Pot: $" + tablePot + ", Current Bet: $" + tableBet);
                 sleep(gameSpeed);
+
                 updateListPlayerNameBankMap();
-                PlayerActions action = tempPlayer.getPlayerAction(new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), listPlayersRemainingGame.size(), playersRemainingInRound, tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex));
+
+                PlayerActions action = tempPlayer.getPlayerAction(new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex));
                 if(action == null) {
                     System.out.println("###NULL PLAYER ACTION RECEIVED, FORCING FOLD###");
                     action = PlayerActions.FOLD;
@@ -168,8 +164,6 @@ public class GameEngine {
                         System.out.println("###FOLD###");
                         playersWithAction--;
                         listPlayersToRemoveFromRound.add(tempPlayer);
-
-                        playersRemainingInRound--;
 
                         if(activeBetNumberOfPlayersLeft > 0){
                             activeBetNumberOfPlayersLeft--;
@@ -217,6 +211,7 @@ public class GameEngine {
                     case ALL_IN:
                         System.out.println("###ALL IN###");
                         playersWithAction--;
+                        listPlayersToRemoveFromRound.add(tempPlayer);
 
                         activeBet = true;
 

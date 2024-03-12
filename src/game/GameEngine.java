@@ -40,6 +40,7 @@ public class GameEngine {
     private GameState state; 
 
     public GameEngine() {
+        //updated 20240311 20:16
         //0 (fullSpeed) to Integer.MAX_VALUE (eternity)
         gameSpeed = 0;
 
@@ -52,11 +53,11 @@ public class GameEngine {
 
         // create players here
 
-        //listPlayersRemainingGame.add(new ManualPlayer("Manual Player"));
-        addSimpleNPCs(0);
-        addRandomNPCs(1000);
+        listPlayersRemainingGame.add(new ManualPlayer("Manual Player"));
+        addSimpleNPCs(4);
+        addRandomNPCs(0);
         addTempPlayers(0);
-        Collections.shuffle(listPlayersRemainingGame);
+        //Collections.shuffle(listPlayersRemainingGame);
 
 
         listPlayersRemainingRound = new ArrayList<>(listPlayersRemainingGame);
@@ -120,6 +121,7 @@ public class GameEngine {
     private void betPhase() {
         boolean phaseComplete = false;
         boolean activeBet = false;
+        tableBet = 0;
 
         int playersWithAction = 0;
 
@@ -137,6 +139,13 @@ public class GameEngine {
             List<Player> listPlayersToRemoveFromRound = new ArrayList<>();
 
             for(Player tempPlayer: new ArrayList<>(listPlayersRemainingRound)) {
+
+                if(tempPlayer.isAllIn()) {
+                    if(playersWithAction == 0) {
+                        phaseComplete = true;
+                    }
+                    continue;
+                }
 
                 if(tempPlayer.isFold() && tempPlayer.isAllIn()) continue;
 
@@ -195,7 +204,6 @@ public class GameEngine {
                         break;
                     case RAISE:
                         System.out.println("###RAISE###");
-                        playersWithAction--;
 
                         activeBet = true;
 
@@ -203,29 +211,24 @@ public class GameEngine {
                         tableBet = tempPlayer.getBet();
                         tablePot += -amountRaiseToPullFromPlayer;
 
-                        playersWithAction += listPlayersRemainingRound.size()-1;
-                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size()-1;
+                        playersWithAction = listPlayersRemainingRound.size()-1;
+                        activeBetNumberOfPlayersLeft = playersWithAction;
 
+                        System.out.println("bet: $" + tempPlayer.getBet() + ", new bank: $" + tempPlayer.getBank());
+                        System.out.println("new pot: $" + tablePot);
                         sleep(gameSpeed);
                         break;
                     case ALL_IN:
                         System.out.println("###ALL IN###");
-                        playersWithAction--;
-                        listPlayersToRemoveFromRound.add(tempPlayer);
 
-                        activeBet = true;
-
-                        int amountAllInToPullFromPlayer = tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
+                        int amountAllInToPullFromPlayer = tempPlayer.adjustPlayerBank(-tempPlayer.getBank());
                         tableBet = tempPlayer.getBet();
                         tablePot += -amountAllInToPullFromPlayer;
 
+                        activeBet = true;
+                        playersWithAction = listPlayersRemainingRound.size() - 1;
+                        activeBetNumberOfPlayersLeft = playersWithAction;
 
-                        playersWithAction += listPlayersRemainingRound.size()-1;
-                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size()-1;
-
-                        if(activeBetNumberOfPlayersLeft > 0){
-                            activeBetNumberOfPlayersLeft--;
-                        }
                         System.out.println("bet: $" + tempPlayer.getBet() + ", new bank: $" + tempPlayer.getBank());
                         System.out.println("new pot: $" + tablePot);
                         sleep(gameSpeed);
@@ -237,7 +240,7 @@ public class GameEngine {
 
                 if(activeBetNumberOfPlayersLeft == 0) activeBet = false;
 
-                if(playersWithAction <= 0  & !activeBet) {
+                if(playersWithAction == 0  & !activeBet) {
                     phaseComplete = true;
                     break;
                 }
@@ -299,13 +302,6 @@ public class GameEngine {
                 }
             }
         }
-
-
-//        for(Player tempPlayer: new ArrayList<>(listPlayersRemainingGame)) {
-//            if(tempPlayer.getBank() <= 0) {
-//                listPlayersRemainingGame.remove(tempPlayer);
-//            }
-//        }
     }
 
     private void showdownPhase() {
@@ -320,7 +316,7 @@ public class GameEngine {
 
         if (listPlayersWinner.size() == 1) {
             listPlayersWinner.get(0).adjustPlayerBank(tablePot);
-            System.out.println("WINNER: " + listPlayersWinner.get(0).getName());
+            System.out.print("WINNER: " + listPlayersWinner.get(0).getName() + " ");
             sleep(gameSpeed);
             for(Card tempCard: listPlayersWinner.get(0).getHandCards()) {
                 System.out.print(tempCard.toString() + " ");
@@ -334,9 +330,12 @@ public class GameEngine {
             for (Player winner : listPlayersWinner) {
                 winner.adjustPlayerBank(splitPotAmount);
                 System.out.println("SPLIT POT: $" + winner.getName());
-                System.out.println("New Bank: $" + winner.getBank() + " (+$" + splitPotAmount + ")");
-                sleep(gameSpeed);
+                System.out.print("New Bank: $" + winner.getBank() + " (+$" + splitPotAmount + ") ");
+                for(Card tempCard: listPlayersWinner.get(0).getHandCards()) {
+                    System.out.print(tempCard.toString() + " ");
+                }
                 System.out.println();
+                sleep(gameSpeed);
             }
         }
     }

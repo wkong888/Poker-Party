@@ -35,7 +35,7 @@ public class TemplatePlayer extends Player {
 
     @Override
     public boolean shouldCheck() {
-        return true;
+        return false;
     }
 
     @Override

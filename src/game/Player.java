@@ -74,34 +74,55 @@ public abstract class Player {
     }
 
     protected void call() {
-        if(!state.isActiveBet() || state.getTableBet() >= bank) {
+        if(!state.isActiveBet()) {
+            System.out.println("###ILLEGAL CALL, ATTEMPTING RAISE###");
+            raise(getGameState().getTableMinBet());
+        }
+        else if(state.getTableBet() > bank) {
             canCall = false;
             if(canCall || canCheck) {
-                System.out.println("###ILLEGAL CALL, NO ACTIVE BET, FORCING CHECK###");
+                System.out.println("###ILLEGAL CALL, FORCING CHECK###");
                 check(); 
             } else {
                 System.out.println("###UNABLE TO CALL OR CHECK, FORCING FOLD###");
                 fold();
             }
         } else {
+            if(bet > bank) {
+                System.out.println("###ILLEGAL BET, bet = bank###");
+                bet = bank;
+            }
+            System.out.println("getTableBet() " + getGameState().getTableBet());
+            System.out.println("bank " + bank);
+            System.out.println("bet " + bet);
             bet = state.getTableBet();
             playerAction = PlayerActions.CALL;
         }
     }
 
     protected void raise(int value) {
-        if(value < state.getTableMinBet() || value + state.getTableBet() <= state.getTableBet()) {
+        if(bank <= 0) {
+            System.out.println("###ILLEGAL RAISE, ZERO BANK, FORCING CHECK###");
+            check();
+        }
+        else if(value < state.getTableMinBet() || value + state.getTableBet() <= state.getTableBet()) {
             System.out.println("###ILLEGAL RAISE, VALUE UNDER ACCEPTED LIMIT, value = state.getTableMinBet()###");
-            value = state.getTableMinBet();
-            bet = value + state.getTableBet();
+            bet = state.getTableBet();
             playerAction = PlayerActions.RAISE;
         }
         else if(value > bank || value + state.getTableBet() >= bank) {
             System.out.println("###ILLEGAL RAISE, VALUE OVER ACCEPTED LIMIT, value = bank###");
             value = bank;
-            bet = value + state.getTableBet();
+            bet = value;
             playerAction = PlayerActions.RAISE;
         } else {
+            if(bet > bank) {
+                System.out.println("###ILLEGAL BET, bet = bank###");
+                bet = bank;
+            }
+            System.out.println("getTableBet() " + getGameState().getTableBet());
+            System.out.println("bank " + bank);
+            System.out.println("bet " + bet);
             bet = value + state.getTableBet();
             playerAction = PlayerActions.RAISE;
         }
@@ -111,6 +132,13 @@ public abstract class Player {
         if(bank < state.getTableBet()) {
             System.out.println("###ILLEGAL ALL IN, BANK LESS THAN TABLE BET##");
         } else {
+            if(bet > bank) {
+                System.out.println("###ILLEGAL BET, bet = bank###");
+                bet = bank;
+            }
+            System.out.println("getTableBet() " + getGameState().getTableBet());
+            System.out.println("bank " + bank);
+            System.out.println("bet " + bet);
             bet = bank;
             isAllIn = true;
             playerAction = PlayerActions.ALL_IN;

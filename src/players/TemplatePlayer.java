@@ -50,6 +50,6 @@ public class TemplatePlayer extends Player {
 
     @Override
     public boolean shouldAllIn() {
-        return true;
+        return false;
     }
 }

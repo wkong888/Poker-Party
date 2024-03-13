@@ -44,7 +44,7 @@ public class GameEngine {
     public static int numGamesPlayed = 0;
 
     public GameEngine() {
-        //updated 20240313 10:42
+        //updated 20240313 11:32
         //0 (fullSpeed) to Integer.MAX_VALUE (~24 days)
         gameSpeed = 0;
 
@@ -331,153 +331,6 @@ public class GameEngine {
 
     }
 
-    /*private void betPhase() {
-        boolean phaseComplete = false;
-        boolean activeBet = false;
-        tableBet = 0;
-
-        int playersWithAction = 0;
-
-        for(Player tempPlayer: listPlayersRemainingRound) {
-            if(!tempPlayer.isFold() && !tempPlayer.isAllIn()) {
-                playersWithAction++;
-            }
-        }
-        System.out.println("outside loop " + listPlayersRemainingRound.size());
-
-        if(listPlayersRemainingRound.size() == 1)   {
-            phaseComplete = true;
-        }
-
-        System.out.println("Current Pot: $" + tablePot + ", Current Bet: $" + tableBet);
-        sleep(gameSpeed);
-        System.out.println();
-
-        while(!phaseComplete) {
-
-
-            List<Player> listPlayersToRemoveFromRound = new ArrayList<>();
-
-            for(Player tempPlayer: new ArrayList<>(listPlayersRemainingRound)) {
-
-//                System.out.println("phaseComplete: " + phaseComplete);
-//                System.out.println("tempPlayer.isAllIn(): " + tempPlayer.isAllIn());
-//                System.out.println("tempPlayer.isFold(): " + tempPlayer.isFold());
-//                System.out.println("playersWithAction: " + playersWithAction);
-//                System.out.println("listPlayersRemainingRound.size(): " + listPlayersRemainingRound.size());
-
-                if(tempPlayer.isAllIn()) {
-                    if(listPlayersRemainingRound.size()-1 == 1) {
-                        phaseComplete = true;
-                    }
-                    continue;
-                }
-
-                if(tempPlayer.isFold() && tempPlayer.isAllIn()) continue;
-
-                if(listPlayersRemainingRound.size()-1 == listPlayersToRemoveFromRound.size()) return;
-
-                System.out.println("Action: " + tempPlayer.getName() + ", Bank: $" + tempPlayer.getBank());
-                for(Card tempCard: tempPlayer.getHandCards()) {
-                    System.out.print(tempCard.toString() + " ");
-                }
-                System.out.println(tempPlayer.evaluatePlayerHand());
-                sleep(gameSpeed);
-                System.out.println("Current Pot: $" + tablePot + ", Current Bet: $" + tableBet);
-                sleep(gameSpeed);
-
-                updateListPlayerNameBankMap();
-
-                PlayerActions action = tempPlayer.getPlayerAction(new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex));
-                if(action == null) {
-                    System.out.println("###NULL PLAYER ACTION RECEIVED, FORCING FOLD###");
-                    action = PlayerActions.FOLD;
-                }
-
-                switch (action) {
-                    case FOLD:
-                        System.out.println("###FOLD###");
-                        playersWithAction--;
-                        listPlayersToRemoveFromRound.add(tempPlayer);
-
-                        if(activeBetNumberOfPlayersLeft > 0){
-                            activeBetNumberOfPlayersLeft--;
-                        }
-                        sleep(gameSpeed);
-                        break;
-                    case CHECK:
-                        System.out.println("###CHECK###");
-                        playersWithAction--;
-
-                        if(activeBetNumberOfPlayersLeft > 0){
-                            activeBetNumberOfPlayersLeft--;
-                        }
-                        sleep(gameSpeed);
-                        break;
-                    case CALL:
-                        System.out.println("###CALL###");
-                        playersWithAction--;
-
-                        int amountCallToPullFromPlayer = tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
-                        tablePot += -amountCallToPullFromPlayer;
-
-                        if(activeBetNumberOfPlayersLeft > 0){
-                            activeBetNumberOfPlayersLeft--;
-                        }
-                        System.out.println("bet: $" + tempPlayer.getBet() + ", new bank: $" + tempPlayer.getBank());
-                        System.out.println("new pot: $" + tablePot);
-                        sleep(gameSpeed);
-                        break;
-                    case RAISE:
-                        System.out.println("###RAISE###");
-
-                        activeBet = true;
-
-                        int amountRaiseToPullFromPlayer = tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
-                        tableBet = tempPlayer.getBet();
-                        tablePot += -amountRaiseToPullFromPlayer;
-
-                        playersWithAction = listPlayersRemainingRound.size()-1;
-                        activeBetNumberOfPlayersLeft = playersWithAction;
-
-                        System.out.println("bet: $" + tempPlayer.getBet() + ", new bank: $" + tempPlayer.getBank());
-                        System.out.println("new pot: $" + tablePot);
-                        sleep(gameSpeed);
-                        break;
-                    case ALL_IN:
-                        System.out.println("###ALL IN###");
-
-                        int amountAllInToPullFromPlayer = tempPlayer.adjustPlayerBank(-tempPlayer.getBank());
-                        tableBet = tempPlayer.getBet();
-                        tablePot += -amountAllInToPullFromPlayer;
-
-                        activeBet = true;
-                        playersWithAction = listPlayersRemainingRound.size() - 1;
-                        activeBetNumberOfPlayersLeft = playersWithAction;
-
-                        System.out.println("bet: $" + tempPlayer.getBet() + ", new bank: $" + tempPlayer.getBank());
-                        System.out.println("new pot: $" + tablePot);
-                        sleep(gameSpeed);
-                        break;
-                }
-                updateListPlayerNameBankMap();
-                System.out.println();
-                sleep(gameSpeed);
-
-                if(activeBetNumberOfPlayersLeft == 0) activeBet = false;
-
-                if(playersWithAction == 0  & !activeBet) {
-                    phaseComplete = true;
-                    break;
-                }
-            }
-            listPlayersRemainingRound.removeAll(listPlayersToRemoveFromRound);
-        }
-    }
-
-     */
-
-
 
     private GameState getCurrentGameState() {
         // Return a new GameState object reflecting the current state
@@ -487,8 +340,6 @@ public class GameEngine {
                 tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames,
                 numRoundStage, dealer, small, big, dealerIndex);
     }
-
-
 
     private void newHandReset() {
         removeBankruptPlayers();
@@ -553,6 +404,8 @@ public class GameEngine {
     }
 
     private void showdownPhase() {
+        System.out.println("evaluating winners");
+        System.out.println("listPlayersRemainingRound.size(): " + listPlayersRemainingRound.size());
         Evaluator evaluator = new Evaluator(listPlayersRemainingRound, tableCards);
         listPlayersWinner = evaluator.findWinners();
 

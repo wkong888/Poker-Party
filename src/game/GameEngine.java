@@ -218,7 +218,12 @@ public class GameEngine {
                     case FOLD:
                         System.out.println("###FOLD###");
                         playersWithAction--;
-                        listPlayersToRemoveFromRound.add(tempPlayer);
+                        if(listPlayersToRemoveFromRound.size() < listPlayersRemainingRound.size()-1) {
+                            //System.out.println("listPlayersToRemoveFromRound.size() " + listPlayersToRemoveFromRound.size());
+                            //System.out.println("listPlayersRemainingRound.size() " + listPlayersRemainingRound.size());
+
+                            listPlayersToRemoveFromRound.add(tempPlayer);
+                        }
 
                         if(activeBetNumberOfPlayersLeft > 0) {
                             activeBetNumberOfPlayersLeft--;

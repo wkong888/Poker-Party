@@ -49,6 +49,7 @@ public abstract class Player {
     }
 
     protected void fold() {
+        System.out.println("state.getNumPlayersRemainingRound(): " + state.getNumPlayersRemainingRound());
         if(state.getNumPlayersRemainingRound() == 1) {
             System.out.println("###ILLEGAL FOLD, ONE PLAYER REMAINING, FORCING CHECK###");
             check();

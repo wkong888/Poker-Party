@@ -28,7 +28,7 @@ public abstract class Player {
 
         this.handCards = new ArrayList<>();
 
-        this.bank = 1000;
+        this.bank = 100;
         this.bet = 0;
 
         this.isDealer = false;
@@ -92,43 +92,47 @@ public abstract class Player {
                 System.out.println("###ILLEGAL BET, bet = bank###");
                 bet = bank;
             }
-            System.out.println("getTableBet() " + getGameState().getTableBet());
-            System.out.println("bank " + bank);
-            System.out.println("bet " + bet);
+//            System.out.println("getTableBet() " + getGameState().getTableBet());
+//            System.out.println("bank " + bank);
+//            System.out.println("bet " + bet);
             bet = state.getTableBet();
             playerAction = PlayerActions.CALL;
         }
     }
 
-    protected void raise(int value) {
+    protected void raise(int betAmount) {
         if(bank <= 0) {
             System.out.println("###ILLEGAL RAISE, ZERO BANK, FORCING CHECK###");
             check();
         }
-        else if(value < state.getTableMinBet() || value + state.getTableBet() <= state.getTableBet()) {
+        else if(betAmount < state.getTableMinBet() || betAmount + state.getTableBet() <= state.getTableBet()) {
             System.out.println("###ILLEGAL RAISE, VALUE UNDER ACCEPTED LIMIT, value = state.getTableMinBet()###");
             bet = state.getTableBet();
             playerAction = PlayerActions.RAISE;
         }
-        else if(value > bank || value + state.getTableBet() >= bank) {
+        else if(betAmount > bank || betAmount + state.getTableBet() >= bank) {
             System.out.println("###ILLEGAL RAISE, VALUE OVER ACCEPTED LIMIT, value = bank###");
-            value = bank;
-            bet = value;
+            betAmount = bank;
+            bet = betAmount;
             playerAction = PlayerActions.RAISE;
         } else {
             if(bet > bank) {
                 System.out.println("###ILLEGAL BET, bet = bank###");
                 bet = bank;
             }
-            System.out.println("getTableBet() " + getGameState().getTableBet());
-            System.out.println("bank " + bank);
-            System.out.println("bet " + bet);
-            bet = value + state.getTableBet();
+//            System.out.println("getTableBet() " + getGameState().getTableBet());
+//            System.out.println("bank " + bank);
+//            System.out.println("bet " + bet);
+            bet = betAmount + state.getTableBet();
             playerAction = PlayerActions.RAISE;
         }
     }
 
     protected void allIn() {
+        if(bank <= 0) {
+            System.out.println("###ILLEGAL ALLIN, ZERO BANK, FORCING CHECK###");
+            check();
+        }
         if(bank < state.getTableBet()) {
             System.out.println("###ILLEGAL ALL IN, BANK LESS THAN TABLE BET##");
         } else {
@@ -136,14 +140,20 @@ public abstract class Player {
                 System.out.println("###ILLEGAL BET, bet = bank###");
                 bet = bank;
             }
-            System.out.println("getTableBet() " + getGameState().getTableBet());
-            System.out.println("bank " + bank);
-            System.out.println("bet " + bet);
+//            System.out.println("getTableBet() " + getGameState().getTableBet());
+//            System.out.println("bank " + bank);
+//            System.out.println("bet " + bet);
             bet = bank;
             isAllIn = true;
             playerAction = PlayerActions.ALL_IN;
         }
     }
+
+
+
+
+
+
 
     PlayerActions getPlayerAction(GameState state) {
         updateGameState(state);
@@ -179,9 +189,8 @@ public abstract class Player {
         return bet;
     }
 
-    int adjustPlayerBank(int value) {
+    void adjustPlayerBank(int value) {
         bank += value;
-        return value;
     }
 
     void setDealer(boolean isDealer) {
@@ -218,6 +227,10 @@ public abstract class Player {
 
     public boolean isFold() {
         return isFold;
+    }
+
+    void setIsFold(boolean isFold) {
+        this.isFold = isFold;
     }
 
     public boolean isAllIn() {

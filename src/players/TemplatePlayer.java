@@ -30,7 +30,7 @@ public class TemplatePlayer extends Player {
 
     @Override
     public boolean shouldFold() {
-        return false;
+        return true;
     }
 
     @Override
@@ -50,6 +50,6 @@ public class TemplatePlayer extends Player {
 
     @Override
     public boolean shouldAllIn() {
-        return false;
+        return true;
     }
 }

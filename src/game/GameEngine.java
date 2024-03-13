@@ -46,7 +46,7 @@ public class GameEngine {
     public GameEngine() {
         //updated 20240313 11:56
         //0 (fullSpeed) to Integer.MAX_VALUE (~24 days)
-        gameSpeed = 0;
+        gameSpeed = 350;
 
         deck = new Deck();
         deck.shuffle();
@@ -59,7 +59,7 @@ public class GameEngine {
 
         //listPlayersRemainingGame.add(new ManualPlayer("Manual Player"));
         addSimpleNPCs(5);
-        addRandomNPCs(5);
+        addRandomNPCs(0);
         addTempPlayers(0);
         Collections.shuffle(listPlayersRemainingGame);
 

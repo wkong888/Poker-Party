@@ -44,7 +44,7 @@ public class GameEngine {
     public static int numGamesPlayed = 0;
 
     public GameEngine() {
-        //updated 20240313 11:36
+        //updated 20240313 11:56
         //0 (fullSpeed) to Integer.MAX_VALUE (~24 days)
         gameSpeed = 0;
 
@@ -324,7 +324,9 @@ public class GameEngine {
                     phaseComplete = true;
                 }
             }
-            listPlayersRemainingRound.removeAll(listPlayersToRemoveFromRound);
+            if(listPlayersToRemoveFromRound.size() < listPlayersRemainingRound.size()) {
+                listPlayersRemainingRound.removeAll(listPlayersToRemoveFromRound);
+            }
         }
 
 

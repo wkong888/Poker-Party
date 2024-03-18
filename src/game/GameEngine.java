@@ -78,6 +78,7 @@ public class GameEngine {
         listPlayersRemainingGame = new ArrayList<>();
 
         // Add NPC players to the game. These methods should be defined to add specific types of NPC players.
+        listPlayersRemainingGame.add(new ManualPlayer("manualPlayer"));
         addConservativeNPCs(2);
         addSimpleNPCs(2);
         addRandomNPCs(1);
@@ -282,7 +283,8 @@ public class GameEngine {
                         tableBet = tempPlayer.getBet();
 
                         // Reset the count of players left to act after the raise, excluding the raising player.
-                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 1;
+                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 2;
+
                         // Log the raise amount and the player's new bank balance.
                         System.out.println("player raise: $" + tempPlayer.getBet());
                         System.out.println("player bank: $" + tempPlayer.getBank());
@@ -299,7 +301,7 @@ public class GameEngine {
                         tableBet = tempPlayer.getBet();
 
                         // Reset the count of players left to act after the all-in, excluding the all-in player.
-                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 1;
+                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 2;
 
                         // Log the all-in amount and the player's new bank balance.
                         System.out.println("player all in: $" + tempPlayer.getBet());

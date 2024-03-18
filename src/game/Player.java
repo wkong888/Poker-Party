@@ -142,7 +142,7 @@ public abstract class Player {
         }
         else if(betAmount < state.getTableMinBet() || betAmount + state.getTableBet() <= state.getTableBet()) {
             System.out.println("###ILLEGAL RAISE, VALUE UNDER ACCEPTED LIMIT, value = state.getTableMinBet()###");
-            bet = state.getTableBet(); // Set player's bet to current table bet if raise amount is under the limit.
+            bet = state.getTableMinBet(); // Set player's bet to current table bet if raise amount is under the limit.
             playerAction = PlayerActions.RAISE; // Update the player's last action to RAISE.
         }
         else if(betAmount > bank || betAmount + state.getTableBet() >= bank) {

@@ -283,7 +283,7 @@ public class GameEngine {
                         tableBet = tempPlayer.getBet();
 
                         // Reset the count of players left to act after the raise, excluding the raising player.
-                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 2;
+                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 1;
 
                         // Log the raise amount and the player's new bank balance.
                         System.out.println("player raise: $" + tempPlayer.getBet());
@@ -301,7 +301,7 @@ public class GameEngine {
                         tableBet = tempPlayer.getBet();
 
                         // Reset the count of players left to act after the all-in, excluding the all-in player.
-                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 2;
+                        activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 1;
 
                         // Log the all-in amount and the player's new bank balance.
                         System.out.println("player all in: $" + tempPlayer.getBet());

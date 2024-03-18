@@ -65,7 +65,6 @@ public abstract class Player {
      * and their last action is updated to FOLD.
      */
     protected void fold() {
-        System.out.println("state.getNumPlayersRemainingRound(): " + state.getNumPlayersRemainingRound());
         if(state.getNumPlayersRemainingRound() == 1) {
             System.out.println("###ILLEGAL FOLD, ONE PLAYER REMAINING, FORCING CHECK###");
             check(); // Force check if folding is not allowed.

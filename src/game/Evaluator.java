@@ -8,6 +8,10 @@ public class Evaluator {
     List<Card> tableCards; // List to store the community cards on the table.
     List<Evaluation> evaluations; // List to store the evaluations of each player's hand.
 
+    public Evaluator() {
+
+    }
+
     // Constructor for the Evaluator class. It initializes the evaluator with a list of players and table cards.
     public Evaluator(List<Player> players, List<Card> tableCards) {
         this.players = new ArrayList<>(players); // Create a new list of players from the provided list to ensure encapsulation.

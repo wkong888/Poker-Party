@@ -1,9 +1,6 @@
 package game;
 
-import players.ManualPlayer;
-import players.RandomPlayer;
-import players.SimpleNPCPlayer;
-import players.TemplatePlayer;
+import players.*;
 
 import java.util.*;
 
@@ -70,7 +67,7 @@ public class GameEngine {
      */
     public GameEngine() {
         //0 (fullSpeed) to Integer.MAX_VALUE (~24 days)
-        gameSpeed = 0;
+        gameSpeed = 350;
 
         // Initialize the deck and shuffle it.
         deck = new Deck();
@@ -81,8 +78,9 @@ public class GameEngine {
         listPlayersRemainingGame = new ArrayList<>();
 
         // Add NPC players to the game. These methods should be defined to add specific types of NPC players.
-        addSimpleNPCs(50);
-        addRandomNPCs(50);
+        addConservativeNPCs(2);
+        addSimpleNPCs(2);
+        addRandomNPCs(1);
         addTempPlayers(0);
         Collections.shuffle(listPlayersRemainingGame);
 
@@ -225,7 +223,7 @@ public class GameEngine {
                         action = PlayerActions.CHECK; // Force a check if only one player is left.
                     } else {
                         System.out.println("###NULL PLAYER ACTION RECEIVED, FORCING FOLD###");
-                        tempPlayer.setIsFold(true); 
+                        tempPlayer.setIsFold(true);
                         action = PlayerActions.FOLD; // Fold the player if their action is null and more than one player remains.
                     }
                 }
@@ -262,7 +260,7 @@ public class GameEngine {
                         // Adjust the player's bank for the call amount and add it to the pot.
                         tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
                         tablePot += tempPlayer.getBet();
-                        
+
                         // Decrement the count of players left to act if there's an active bet.
                         if(activeBetNumberOfPlayersLeft > 0) {
                             activeBetNumberOfPlayersLeft--;
@@ -342,24 +340,24 @@ public class GameEngine {
     private void newHandReset() {
         // Remove players with a bank balance of zero or less, indicating bankruptcy.
         removeBankruptPlayers();
- 
+
         // Reinitialize the deck and shuffle for a new hand.
         deck = new Deck();
         deck.shuffle();
- 
+
         // Clear the table cards and reset pot and bet values for the new hand.
         tableCards.clear();
         tablePot = 0;
         tableBet = 0;
- 
+
         // Increment the total number of games played.
         numTotalGames++;
         // Clear the list of players remaining in the round, preparing for the new hand.
         listPlayersRemainingRound.clear();
- 
+
         // Rotate the dealer position by moving the first player in the list to the end.
         listPlayersRemainingGame.add(listPlayersRemainingGame.remove(0));
- 
+
         // Re-add all remaining players to the round.
         for(Player tempPlayer: listPlayersRemainingGame) {
             listPlayersRemainingRound.add(tempPlayer);
@@ -369,18 +367,18 @@ public class GameEngine {
             System.out.println("FINAL WINNER: " + listPlayersRemainingRound.get(0).getName() + ", BANK: $" + listPlayersRemainingRound.get(0).getBank());
             System.out.println("Number of games simulated: " + ++numGamesPlayed);
             sleep(60000); // Pause before restarting the game.
- 
+
             GameEngine game = new GameEngine(); // Create a new instance of the game.
             game.start(); // Start the new game instance.
             // Note: The system exit call is commented out to allow the game to restart.
             //System.exit(0);
         }
- 
+
         // Reset each player for the new hand.
         for(Player tempPlayer: listPlayersRemainingRound) {
             tempPlayer.newHandReset();
         }
- 
+
         // Clear and update the list of player name to bank balance mappings for the new hand.
         listPlayersNameBankMap.clear();
         for(Player tempPlayer: listPlayersRemainingRound) {
@@ -410,21 +408,18 @@ public class GameEngine {
     }
 
     private void showdownPhase() {
-        // Announce the start of the showdown phase to evaluate winners.
-        System.out.println("evaluating winners");
-        System.out.println("listPlayersRemainingRound.size(): " + listPlayersRemainingRound.size());
         // Create an evaluator instance with the remaining players and table cards to find the winner(s).
         Evaluator evaluator = new Evaluator(listPlayersRemainingRound, tableCards);
         // Determine the winner(s) based on the best hand.
         listPlayersWinner = evaluator.findWinners();
- 
+
         // Display the community cards on the table.
         for(Card tempCard: tableCards) {
             System.out.print(tempCard.toString() + " ");
         }
         sleep(gameSpeed); // Pause for readability.
         System.out.println("\n");
- 
+
         // Handle the case of a single winner.
         if (listPlayersWinner.size() == 1) {
             // Award the pot to the sole winner.
@@ -438,7 +433,7 @@ public class GameEngine {
             }
             sleep(gameSpeed); // Pause for readability.
             // Announce the winner's new bank balance after receiving the pot.
-            System.out.println("New Bank: $" + listPlayersWinner.get(0).getBank() + " (+$" + tablePot + ")");
+            System.out.println("\nNew Bank: $" + listPlayersWinner.get(0).getBank() + " (+$" + tablePot + ")");
             sleep(gameSpeed); // Pause before continuing.
             System.out.println();
         } else {
@@ -448,7 +443,7 @@ public class GameEngine {
                 // Adjust each winner's bank balance with their share of the pot.
                 winner.adjustPlayerBank(splitPotAmount);
                 // Announce each winner and their new bank balance.
-                System.out.println("SPLIT POT: $" + winner.getName());
+                System.out.println("SPLIT POT: " + winner.getName());
                 System.out.print("New Bank: $" + winner.getBank() + " (+$" + splitPotAmount + ") ");
                 // Display the winning hand for the first winner as an example (could be adjusted to show all if needed).
                 for(Card tempCard: listPlayersWinner.get(0).getHandCards()) {
@@ -622,7 +617,7 @@ public class GameEngine {
     private void addTempPlayers(int numPlayers) {
         for(int i = 0; i < numPlayers; i++) {
             // Generate a unique name for each temporary player.
-            String tempName = "TemplatePlayer#" + i;
+            String tempName = "Template#" + i;
             // Add the temporary player to the list of players still in the game.
             listPlayersRemainingGame.add(new TemplatePlayer(tempName));
         }
@@ -632,7 +627,7 @@ public class GameEngine {
     private void addSimpleNPCs(int numPlayers) {
         for(int i = 0; i < numPlayers; i++) {
             // Generate a unique name for each simple NPC player.
-            String tempName = "SimpleNPCPlayer#" + i;
+            String tempName = "Simple#" + i;
             // Add the simple NPC player to the list of players still in the game.
             listPlayersRemainingGame.add(new SimpleNPCPlayer(tempName));
         }
@@ -642,9 +637,19 @@ public class GameEngine {
     private void addRandomNPCs(int numPlayers) {
         for(int i = 0; i < numPlayers; i++) {
             // Generate a unique name for each random NPC player.
-            String tempName = "RandomPlayer#" + i;
+            String tempName = "Random#" + i;
             // Add the random NPC player to the list of players still in the game.
             listPlayersRemainingGame.add(new RandomPlayer(tempName));
+        }
+    }
+
+    // Adds a specified number of random NPC players to the game.
+    private void addConservativeNPCs(int numPlayers) {
+        for(int i = 0; i < numPlayers; i++) {
+            // Generate a unique name for each random NPC player.
+            String tempName = "Conversative#" + i;
+            // Add the random NPC player to the list of players still in the game.
+            listPlayersRemainingGame.add(new ConservativeNPCPlayer(tempName));
         }
     }
 

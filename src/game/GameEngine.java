@@ -78,15 +78,13 @@ public class GameEngine {
         listPlayersRemainingGame = new ArrayList<>();
 
         // Add NPC players to the game. These methods should be defined to add specific types of NPC players.
-        addTempPlayers(4);
-        listPlayersRemainingGame.add(new ManualPlayer("manualPlayer"));
-        
-        
-        //addConservativeNPCs(2);
-        //addSimpleNPCs(2);
-        //addRandomNPCs(1);
-        //addTempPlayers(0);
-        //Collections.shuffle(listPlayersRemainingGame);
+
+        //listPlayersRemainingGame.add(new ManualPlayer("manualPlayer"));
+        addConservativeNPCs(2);
+        addSimpleNPCs(2);
+        addRandomNPCs(1);
+        addTempPlayers(0);
+        Collections.shuffle(listPlayersRemainingGame);
 
         // Initialize the lists for the current round, winners, and player bank mappings.
         listPlayersRemainingRound = new ArrayList<>(listPlayersRemainingGame);

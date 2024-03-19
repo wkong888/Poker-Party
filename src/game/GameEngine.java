@@ -78,12 +78,15 @@ public class GameEngine {
         listPlayersRemainingGame = new ArrayList<>();
 
         // Add NPC players to the game. These methods should be defined to add specific types of NPC players.
+        addTempPlayers(4);
         listPlayersRemainingGame.add(new ManualPlayer("manualPlayer"));
-        addConservativeNPCs(2);
-        addSimpleNPCs(2);
-        addRandomNPCs(1);
-        addTempPlayers(0);
-        Collections.shuffle(listPlayersRemainingGame);
+        
+        
+        //addConservativeNPCs(2);
+        //addSimpleNPCs(2);
+        //addRandomNPCs(1);
+        //addTempPlayers(0);
+        //Collections.shuffle(listPlayersRemainingGame);
 
         // Initialize the lists for the current round, winners, and player bank mappings.
         listPlayersRemainingRound = new ArrayList<>(listPlayersRemainingGame);
@@ -155,6 +158,8 @@ public class GameEngine {
         boolean phaseComplete = false;
         // Reset the current bet to 0 at the start of the betting phase.
         tableBet = 0;
+        Player bettor = null; 
+
 
         // Check if there is only one player remaining in the round.
         if(listPlayersRemainingRound.size() == 1) {
@@ -196,10 +201,14 @@ public class GameEngine {
                 return;
             }
 
+            if(activeBet) {
+                playersWithAction--; 
+            }
+
             // Iterate over a copy of the list of players still in the round to avoid concurrent modification issues.
             for(Player tempPlayer: new ArrayList<>(listPlayersRemainingRound)) {
                 // Skip players who have already folded or are all-in, as they cannot take further actions.
-                if(tempPlayer.isFold() || tempPlayer.isAllIn()) continue;
+                if(tempPlayer.isFold() || tempPlayer.isAllIn() || tempPlayer.equals(bettor)) continue;
 
                 // Display the current player's name, bank balance, and hand cards.
                 System.out.println("Action: " + tempPlayer.getName() + ", Bank: $" + tempPlayer.getBank());
@@ -276,6 +285,8 @@ public class GameEngine {
                         System.out.println("###RAISE###");
                         playersWithAction--;
                         activeBet = true;
+                        bettor = tempPlayer;
+
 
                         // Adjust the player's bank for the raise amount, update the pot and the current bet to match the raise.
                         tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
@@ -294,6 +305,7 @@ public class GameEngine {
                         System.out.println("###ALL_IN###");
                         playersWithAction--;
                         activeBet = true;
+                        bettor = tempPlayer;
 
                         // Adjust the player's bank for the all-in amount, update the pot and the current bet to match.
                         tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
@@ -315,10 +327,17 @@ public class GameEngine {
                 // Pause for a moment to simulate real-time gameplay and allow for readability of the game's progress.
                 sleep(gameSpeed);
 
+                
+
                 // If there are no players left with actions due to all players checking, calling, or being all-in, deactivate the active bet.
                 if(activeBetNumberOfPlayersLeft == 0) {
                     activeBet = false;
                 }
+
+                System.out.println("activeBetNumberOfPlayersLeft " + activeBetNumberOfPlayersLeft);
+                System.out.println("activeBet " + activeBet);
+                System.out.println("playersWithAction " + playersWithAction);
+
 
                 // Determine if the betting phase is complete. This occurs when all players have acted (no players with actions left) and there is no active bet.
                 if(playersWithAction <= 0 && !activeBet) {

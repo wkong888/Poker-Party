@@ -11,15 +11,21 @@ public class SimpleNPCPlayer extends Player {
 
     @Override
     protected void takePlayerTurn() {
+//        System.out.println("im in takePlayerTurn()");
         if (shouldFold()) {
+//            System.out.println("im going to fold");
             fold();
         } else if (shouldCheck()) {
+//            System.out.println("im going to check");
             check();
         } else if (shouldCall()) {
+//            System.out.println("im going to call");
             call();
         } else if (shouldRaise()) {
+//            System.out.println("im going to raise");
             raise(getGameState().getTableMinBet()); // Example: always raises the minimum bet
         } else if (shouldAllIn()) {
+//            System.out.println("im going to all");
             allIn();
         }        
     }
@@ -46,7 +52,7 @@ public class SimpleNPCPlayer extends Player {
     protected boolean shouldRaise() {
         // Expand raise conditions to include scenarios where previously a call might have been made
         // Example: raise if the hand is decent (lower than before) or if the bet is a small percentage of the bank
-        boolean hasDecentHand = evaluatePlayerHand().getValue() >= HandRanks.HIGH_CARD.getValue();
+        boolean hasDecentHand = evaluatePlayerHand().getValue() > HandRanks.HIGH_CARD.getValue();
         boolean betIsSmallPercentageOfBank = getGameState().getTableBet() < getBank() * 0.05;
         return hasDecentHand || betIsSmallPercentageOfBank;
     }

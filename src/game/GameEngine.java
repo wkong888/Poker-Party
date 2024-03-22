@@ -67,7 +67,7 @@ public class GameEngine {
      */
     public GameEngine() {
         //0 (fullSpeed) to Integer.MAX_VALUE (~24 days)
-        gameSpeed = 350;
+        gameSpeed = 10;
 
         // Initialize the deck and shuffle it.
         deck = new Deck();
@@ -79,11 +79,12 @@ public class GameEngine {
 
         // Add NPC players to the game. These methods should be defined to add specific types of NPC players.
 
-        //listPlayersRemainingGame.add(new ManualPlayer("manualPlayer"));
-        addConservativeNPCs(2);
         addSimpleNPCs(2);
-        addRandomNPCs(1);
-        addTempPlayers(0);
+        //listPlayersRemainingGame.add(new ManualPlayer("manualPlayer"));
+        addConservativeNPCs(0);
+        addSimpleNPCs(0);
+        addRandomNPCs(2);
+        addTempPlayers(1);
         Collections.shuffle(listPlayersRemainingGame);
 
         // Initialize the lists for the current round, winners, and player bank mappings.
@@ -170,6 +171,13 @@ public class GameEngine {
         // Pause for a moment based on the game speed setting.
         sleep(gameSpeed);
 
+        System.out.println();
+//        System.out.print("players left in the round (listPlayersRemainingRound): ");
+//        for(Player tempPlayer: listPlayersRemainingRound) {
+//            System.out.print(tempPlayer.getName() + ".isBet() " + tempPlayer.isBet() + ", ");
+//        }
+//        System.out.println();
+
         // Continue the betting phase until it is complete.
         while(!phaseComplete) {
             // List to track players who fold or are otherwise removed during this betting phase.
@@ -179,34 +187,38 @@ public class GameEngine {
             int playersWithAction = 0;
 
             // Iterate over each player still in the round to take their action.
+//            System.out.println("rebuilding players with action " + playersWithAction);
             for(Player tempPlayer: listPlayersRemainingRound) {
-                if(!tempPlayer.isFold() && !tempPlayer.isAllIn()) {
+                if(!tempPlayer.isFold() && !tempPlayer.isAllIn() && !tempPlayer.isBet()) {
                     playersWithAction++;
                 }
             }
+//            System.out.println("current players with action "  + playersWithAction);
+            sleep(100);
 
             // Check if all remaining players have gone all-in. If so, no further action is possible, and the phase can end.
             boolean allPlayersAllIn = true;
             for(Player tempPlayer: listPlayersRemainingRound) {
-                if(!tempPlayer.isAllIn()) {
+                if(!tempPlayer.isBet() || !tempPlayer.isAllIn()) {
                     allPlayersAllIn = false;
                     break; // As soon as one player who is not all-in is found, break the loop.
                 }
             }
 
             // If all players are all-in, end the betting phase early since no further bets can be placed.
-            if(allPlayersAllIn) {
+            if(allPlayersAllIn || playersWithAction == 0) {
                 return;
             }
 
-            if(activeBet) {
-                playersWithAction--; 
-            }
+
 
             // Iterate over a copy of the list of players still in the round to avoid concurrent modification issues.
             for(Player tempPlayer: new ArrayList<>(listPlayersRemainingRound)) {
+//                System.out.println(tempPlayer.getName() + ".isBet() " + tempPlayer.isBet());
+//                System.out.println("activeBet " + activeBet);
+
                 // Skip players who have already folded or are all-in, as they cannot take further actions.
-                if(tempPlayer.isFold() || tempPlayer.isAllIn() || tempPlayer.equals(bettor)) continue;
+                if(tempPlayer.isFold() || tempPlayer.isAllIn() || tempPlayer.isBet() || tempPlayer.equals(bettor)) continue;
 
                 // Display the current player's name, bank balance, and hand cards.
                 System.out.println("Action: " + tempPlayer.getName() + ", Bank: $" + tempPlayer.getBank());
@@ -224,6 +236,8 @@ public class GameEngine {
 
                 // Request the player's action for this round, providing the current game state as context.
                 PlayerActions action = tempPlayer.getPlayerAction(new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size()-listPlayersToRemoveFromRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex));
+//                System.out.println("receiving player action of: " + action);
+
                 // Handle null actions by either forcing a check if only one player remains or folding the player otherwise.
                 if(action == null) {
                     if(listPlayersRemainingRound.size()-listPlayersToRemoveFromRound.size() == 1) {
@@ -245,6 +259,7 @@ public class GameEngine {
                         // Add the player to the list of players to remove from the round if they fold.
                         if(listPlayersToRemoveFromRound.size() < listPlayersRemainingRound.size()-1) {
                             listPlayersToRemoveFromRound.add(tempPlayer);
+                            tempPlayer.setActionRemaining(false);
                         }
 
                         // Decrement the count of players left to act if there's an active bet.
@@ -257,13 +272,20 @@ public class GameEngine {
                         // Log the check action and decrement the count of players with actions left.
                         System.out.println("###CHECK###");
                         playersWithAction--;
+                        tempPlayer.setActionRemaining(false);
 
                         break;
                     case CALL:
                         // Log the call action, mark the bet as active, and decrement the count of players with actions left.
                         System.out.println("###CALL###");
+//                        System.out.println("players with action inside of call, before decrement " + playersWithAction);
                         playersWithAction--;
+
                         activeBet = true;
+                        bettor = tempPlayer;
+                        tempPlayer.setActionRemaining(false);
+
+                        tempPlayer.setIsBet(true);
 
                         // Adjust the player's bank for the call amount and add it to the pot.
                         tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
@@ -281,9 +303,25 @@ public class GameEngine {
                     case RAISE:
                         // Log the raise action, mark the bet as active, and decrement the count of players with actions left.
                         System.out.println("###RAISE###");
-                        playersWithAction--;
+                        //playersWithAction--;
+                        playersWithAction = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 1;
                         activeBet = true;
                         bettor = tempPlayer;
+
+//                        System.out.print("players remaining in round: ");
+                        for(Player remainingPlayer: listPlayersRemainingRound) {
+                            if(!listPlayersToRemoveFromRound.contains(remainingPlayer)) {
+//                                System.out.print(remainingPlayer.getName() + " ");
+                                if(!remainingPlayer.isAllIn()) {
+                                    remainingPlayer.setIsBet(false);
+                                }
+                            }
+                        }
+//                        System.out.println();
+
+                        tempPlayer.setIsBet(true);
+
+
 
 
                         // Adjust the player's bank for the raise amount, update the pot and the current bet to match the raise.
@@ -294,6 +332,7 @@ public class GameEngine {
                         // Reset the count of players left to act after the raise, excluding the raising player.
                         activeBetNumberOfPlayersLeft = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 1;
 
+
                         // Log the raise amount and the player's new bank balance.
                         System.out.println("player raise: $" + tempPlayer.getBet());
                         System.out.println("player bank: $" + tempPlayer.getBank());
@@ -301,9 +340,21 @@ public class GameEngine {
                     case ALL_IN:
                         // Log the all-in action, mark the bet as active, and decrement the count of players with actions left.
                         System.out.println("###ALL_IN###");
-                        playersWithAction--;
+                        //playersWithAction--;
+                        playersWithAction = listPlayersRemainingRound.size() - listPlayersToRemoveFromRound.size() - 1;
                         activeBet = true;
                         bettor = tempPlayer;
+
+//                        System.out.print("players remaining in round: ");
+                        for(Player remainingPlayer: listPlayersRemainingRound) {
+                            if(!listPlayersToRemoveFromRound.contains(remainingPlayer)) {
+//                                System.out.print(remainingPlayer.getName() + " ");
+                                remainingPlayer.setIsBet(false);
+                            }
+                        }
+
+                        tempPlayer.setIsBet(true);
+
 
                         // Adjust the player's bank for the all-in amount, update the pot and the current bet to match.
                         tempPlayer.adjustPlayerBank(-tempPlayer.getBet());
@@ -319,6 +370,8 @@ public class GameEngine {
                         break;
                 }
 
+//                System.out.println(tempPlayer.getName() + ".isActionRemaining() " + tempPlayer.isActionRemaining());
+
                 // Update the mapping of player names to their current bank balances after each action.
                 updateListPlayerNameBankMap();
 
@@ -332,9 +385,9 @@ public class GameEngine {
                     activeBet = false;
                 }
 
-                System.out.println("activeBetNumberOfPlayersLeft " + activeBetNumberOfPlayersLeft);
-                System.out.println("activeBet " + activeBet);
-                System.out.println("playersWithAction " + playersWithAction);
+//                System.out.println("activeBetNumberOfPlayersLeft " + activeBetNumberOfPlayersLeft);
+//                System.out.println("activeBet " + activeBet);
+//                System.out.println("playersWithAction " + playersWithAction);
 
 
                 // Determine if the betting phase is complete. This occurs when all players have acted (no players with actions left) and there is no active bet.
@@ -352,6 +405,9 @@ public class GameEngine {
             if(listPlayersToRemoveFromRound.size() < listPlayersRemainingRound.size()) {
                 listPlayersRemainingRound.removeAll(listPlayersToRemoveFromRound);
             }
+        }
+        for(Player tempPlayer: listPlayersRemainingRound) {
+            tempPlayer.setIsBet(false);
         }
     }
 

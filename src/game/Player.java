@@ -83,8 +83,6 @@ public abstract class Player {
      * Otherwise, the player's last action is updated to CHECK.
      */
     protected void check() {
-//        System.out.println("state.isActiveBet() " + state.isActiveBet());
-//        System.out.println("state.getNumPlayersRemainingRound() " + state.getNumPlayersRemainingRound());
         if(state.isActiveBet() && state.getNumPlayersRemainingRound() != 1) {
             canCheck = false;
             if(canCall || canCheck) {
@@ -198,7 +196,7 @@ public abstract class Player {
      */
     PlayerActions getPlayerAction(GameState state) {
         playerAction = null;
-        printExampleStateInformation();
+        //printExampleStateInformation();
         updateGameState(state); // Update the player's game state to the current state.
         takePlayerTurn(); // Execute the player's turn based on the updated state.
         return playerAction; // Return the action taken by the player.

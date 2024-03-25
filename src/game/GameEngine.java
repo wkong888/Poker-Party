@@ -238,7 +238,7 @@ public class GameEngine {
                 sleep(gameSpeed);
 
                 // Request the player's action for this round, providing the current game state as context.
-                PlayerActions action = tempPlayer.getPlayerAction(new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size()-listPlayersToRemoveFromRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex));
+                PlayerActions action = tempPlayer.getPlayerAction(new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), deck.getNumDecksUsed(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size()-listPlayersToRemoveFromRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex));
 
                 // Handle null actions by either forcing a check if only one player remains or folding the player otherwise.
                 if(action == null) {

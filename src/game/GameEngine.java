@@ -11,6 +11,7 @@ public class GameEngine {
 
     // The deck of cards used in the game.
     private Deck deck;
+    private int numDecksUsed;
 
     // Cards that are currently on the table (community cards in poker).
     private List<Card> tableCards;
@@ -71,6 +72,7 @@ public class GameEngine {
 
         // Initialize the deck and shuffle it.
         deck = new Deck();
+        numDecksUsed = deck.getNumDecksUsed();
         deck.shuffle();
 
         // Initialize the list of table cards and player lists.
@@ -121,7 +123,7 @@ public class GameEngine {
         }
 
         // Create and update the game state for all players.
-        state = new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex);
+        state = new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), numDecksUsed, listPlayersRemainingGame.size(), listPlayersRemainingRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex);
         for (Player tempPlayer : listPlayersRemainingRound) {
             tempPlayer.updateGameState(state);
         }

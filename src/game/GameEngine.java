@@ -107,6 +107,18 @@ public class GameEngine {
         numRoundStage = 0;
         dealerIndex = 0;
 
+        dealer = listPlayersRemainingGame.get(0);
+        // Assign small and big blind positions based on the number of players.
+        if(listPlayersRemainingGame.size() <= 2) {
+            // In heads-up play, the dealer is also the small blind.
+            small = listPlayersRemainingGame.get(0);
+            big = listPlayersRemainingGame.get(1);
+        } else {
+            // In games with more than two players, the blinds follow the dealer.
+            small = listPlayersRemainingGame.get(1);
+            big = listPlayersRemainingGame.get(2);
+        }
+
         // Create and update the game state for all players.
         state = new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex);
         for (Player tempPlayer : listPlayersRemainingRound) {
@@ -123,6 +135,7 @@ public class GameEngine {
             // Pre-flop: The initial stage of the game where each player is dealt two cards.
             numRoundStage = 0; // Reset the round stage to pre-flop.
             rotateDealer(); // Rotate the dealer position.
+            updateListPlayerNameBankMap();
             dealHoleCards(2); // Deal two hole cards to each player.
             printGameDetails(); // Print the current state of the game.
             betPhase(); // Execute the betting phase for the pre-flop.
@@ -156,7 +169,7 @@ public class GameEngine {
         boolean phaseComplete = false;
         // Reset the current bet to 0 at the start of the betting phase.
         tableBet = 0;
-        Player bettor = null; 
+        Player bettor = null;
 
 
         // Check if there is only one player remaining in the round.
@@ -173,6 +186,8 @@ public class GameEngine {
 
         // Continue the betting phase until it is complete.
         while(!phaseComplete) {
+            updateListPlayerNameBankMap();
+
             // List to track players who fold or are otherwise removed during this betting phase.
             List<Player> listPlayersToRemoveFromRound = new ArrayList<>();
 
@@ -374,7 +389,6 @@ public class GameEngine {
         }
     }
 
-
     private void newHandReset() {
         // Remove players with a bank balance of zero or less, indicating bankruptcy.
         removeBankruptPlayers();
@@ -428,7 +442,7 @@ public class GameEngine {
 
     private void updateListPlayerNameBankMap() {
         listPlayersNameBankMap = new ArrayList<>();
-        for(Player tempPlayer: listPlayersRemainingRound) {
+        for(Player tempPlayer: listPlayersRemainingGame) {
             Map<String, Integer> tempMap = new HashMap<>();
             tempMap.put(tempPlayer.getName(), tempPlayer.getBank());
             listPlayersNameBankMap.add(tempMap);
@@ -561,6 +575,8 @@ public class GameEngine {
             big.adjustPlayerBank(-tableAnteBig);
             tablePot += tableAnteBig;
         }
+        updateListPlayerNameBankMap();
+
     }
 
     private void printWelcome() {

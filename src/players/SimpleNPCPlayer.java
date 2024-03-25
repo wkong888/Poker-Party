@@ -11,21 +11,15 @@ public class SimpleNPCPlayer extends Player {
 
     @Override
     protected void takePlayerTurn() {
-//        System.out.println("im in takePlayerTurn()");
         if (shouldFold()) {
-//            System.out.println("im going to fold");
             fold();
         } else if (shouldCheck()) {
-//            System.out.println("im going to check");
             check();
         } else if (shouldCall()) {
-//            System.out.println("im going to call");
             call();
         } else if (shouldRaise()) {
-//            System.out.println("im going to raise");
             raise(getGameState().getTableMinBet()); // Example: always raises the minimum bet
         } else if (shouldAllIn()) {
-//            System.out.println("im going to all");
             allIn();
         }        
     }

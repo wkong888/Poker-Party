@@ -197,13 +197,10 @@ public abstract class Player {
      * @return The last action taken by the player.
      */
     PlayerActions getPlayerAction(GameState state) {
-//        System.out.println("starting eval of npc decision");
-//        System.out.println("previous player action " + playerAction);
         playerAction = null;
         //printExampleStateInformation();
         updateGameState(state); // Update the player's game state to the current state.
         takePlayerTurn(); // Execute the player's turn based on the updated state.
-//        System.out.println("returning player action " + playerAction);
         return playerAction; // Return the action taken by the player.
     }
 
@@ -450,7 +447,6 @@ public abstract class Player {
      * @return True if the player should go all-in, false otherwise.
      */
     protected abstract boolean shouldAllIn();
-
      
     /**
      * Prints example game state information to demonstrate how to access and use data from the GameState object.

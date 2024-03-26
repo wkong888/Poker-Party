@@ -38,7 +38,7 @@ public abstract class Player {
 
         this.handCards = new ArrayList<>();
 
-        this.bank = 1000; // Default starting bank balance.
+        this.bank = 100; // Default starting bank balance.
         this.bet = 0; // Initial bet is zero.
 
         // Initially, the player is not in any special state.

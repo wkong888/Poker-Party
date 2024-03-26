@@ -47,7 +47,7 @@ public class Deck {
                     cards.add(new Card(suit, value)); // Add a new card to the deck for each suit and value.
                 }
             }
-            numDecksUsed ++;
+            numDecksUsed++;
             shuffle(); // Shuffle the new deck.
         }
         return cards.remove(cards.size() - 1); // Remove and return the top card from the deck.

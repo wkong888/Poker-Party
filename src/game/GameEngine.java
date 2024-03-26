@@ -83,10 +83,10 @@ public class GameEngine {
 
         listPlayersRemainingGame.add(new AdamsPlayer("BCA"));
         //listPlayersRemainingGame.add(new ManualPlayer("Manual"));
-        //addConservativeNPCs(1);
-        addSimpleNPCs(3);
-        addRandomNPCs(1);
-        //addTempPlayers(0);
+        addConservativeNPCs(2);
+        addSimpleNPCs(2);
+        addRandomNPCs(0);
+        //addTempPlayers(2);
         Collections.shuffle(listPlayersRemainingGame);
 
         // Initialize the lists for the current round, winners, and player bank mappings.
@@ -123,7 +123,7 @@ public class GameEngine {
         }
 
         // Create and update the game state for all players.
-        state = new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), numDecksUsed, listPlayersRemainingGame.size(), listPlayersRemainingRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex);
+        state = new GameState(tableCards, listPlayersNameBankMap, deck.getDeckSize(), deck.getNumDecksUsed(), listPlayersRemainingGame.size(), listPlayersRemainingRound.size(), tableAnteCountdown, tableAnteSmall, tableAnteBig, tablePot, tableBet, tableMinBet, activeBet, activeBetNumberOfPlayersLeft, numTotalGames, numRoundStage, dealer, small, big, dealerIndex);
         for (Player tempPlayer : listPlayersRemainingRound) {
             tempPlayer.updateGameState(state);
         }
@@ -397,8 +397,8 @@ public class GameEngine {
         removeBankruptPlayers();
 
         // Reinitialize the deck and shuffle for a new hand.
-        deck = new Deck();
-        deck.shuffle();
+//        deck = new Deck();
+//        deck.shuffle();
 
         // Clear the table cards and reset pot and bet values for the new hand.
         tableCards.clear();
@@ -423,10 +423,10 @@ public class GameEngine {
             System.out.println("Number of games simulated: " + ++numGamesPlayed);
             sleep(10000); // Pause before restarting the game.
 
-            GameEngine game = new GameEngine(); // Create a new instance of the game.
-            game.start(); // Start the new game instance.
+            //GameEngine game = new GameEngine(); // Create a new instance of the game.
+            //game.start(); // Start the new game instance.
             // Note: The system exit call is commented out to allow the game to restart.
-            //System.exit(0);
+            System.exit(0);
         }
 
         // Reset each player for the new hand.

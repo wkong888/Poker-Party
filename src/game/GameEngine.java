@@ -4,14 +4,14 @@ import players.*;
 
 import java.util.*;
 
-//updated 20240325 11:14
+//updated 20240326 08:36
 public class GameEngine {
     // The speed at which the game progresses, 0 for full speed.
     private int gameSpeed;
+    private boolean runGameContinuously;
 
     // The deck of cards used in the game.
     private Deck deck;
-    private int numDecksUsed;
 
     // Cards that are currently on the table (community cards in poker).
     private List<Card> tableCards;
@@ -69,10 +69,10 @@ public class GameEngine {
     public GameEngine() {
         //0 (fullSpeed) to Integer.MAX_VALUE (~24 days)
         gameSpeed = 350;
+        runGameContinuously = false;
 
         // Initialize the deck and shuffle it.
         deck = new Deck();
-        numDecksUsed = deck.getNumDecksUsed();
         deck.shuffle();
 
         // Initialize the list of table cards and player lists.
@@ -81,7 +81,7 @@ public class GameEngine {
 
         // Add NPC players to the game. These methods should be defined to add specific types of NPC players.
 
-        listPlayersRemainingGame.add(new AdamsPlayer("BCA"));
+        //listPlayersRemainingGame.add(new AdamsPlayer("BCA"));
         //listPlayersRemainingGame.add(new ManualPlayer("Manual"));
         addConservativeNPCs(2);
         addSimpleNPCs(2);
@@ -396,10 +396,6 @@ public class GameEngine {
         // Remove players with a bank balance of zero or less, indicating bankruptcy.
         removeBankruptPlayers();
 
-        // Reinitialize the deck and shuffle for a new hand.
-//        deck = new Deck();
-//        deck.shuffle();
-
         // Clear the table cards and reset pot and bet values for the new hand.
         tableCards.clear();
         tablePot = 0;
@@ -423,10 +419,12 @@ public class GameEngine {
             System.out.println("Number of games simulated: " + ++numGamesPlayed);
             sleep(10000); // Pause before restarting the game.
 
-            //GameEngine game = new GameEngine(); // Create a new instance of the game.
-            //game.start(); // Start the new game instance.
-            // Note: The system exit call is commented out to allow the game to restart.
-            System.exit(0);
+            if(runGameContinuously) {
+                GameEngine game = new GameEngine(); // Create a new instance of the game.
+                game.start(); // Start the new game instance.
+            } else {
+                System.exit(0);
+            }
         }
 
         // Reset each player for the new hand.

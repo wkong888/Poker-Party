@@ -216,7 +216,6 @@ public abstract class Player {
         isBig = false;
         isFold = false;
         isAllIn = false;
-        //isBet = false;
         isBetActive = false;
 
         // By default, a player can call or check in the new hand.
@@ -364,7 +363,7 @@ public abstract class Player {
      * @return True if there is an active bet, false otherwise.
      */
     protected boolean isBetActive() {
-        return isBetActive;
+        return state.isActiveBet();
     }
 
     public boolean isActionRemaining() {

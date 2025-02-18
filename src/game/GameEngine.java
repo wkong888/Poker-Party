@@ -68,7 +68,7 @@ public class GameEngine {
      */
     public GameEngine() {
         //0 (fullSpeed) to Integer.MAX_VALUE (~24 days)
-        gameSpeed = 350;
+        gameSpeed = 300;
         runGameContinuously = false;
 
         // Initialize the deck and shuffle it.
@@ -77,16 +77,7 @@ public class GameEngine {
 
         // Initialize the list of table cards and player lists.
         tableCards = new ArrayList<>();
-        listPlayersRemainingGame = new ArrayList<>();
-
-        // Add NPC players to the game. These methods should be defined to add specific types of NPC players.
-
-        //listPlayersRemainingGame.add(new AdamsPlayer("BCA"));
-        //listPlayersRemainingGame.add(new ManualPlayer("Manual"));
-        addConservativeNPCs(2);
-        addSimpleNPCs(2);
-        addRandomNPCs(0);
-        //addTempPlayers(2);
+        listPlayersRemainingGame = new AddPlayers().getPlayersInGame();
         Collections.shuffle(listPlayersRemainingGame);
 
         // Initialize the lists for the current round, winners, and player bank mappings.
@@ -662,46 +653,6 @@ public class GameEngine {
             }
         }
         System.out.println();
-    }
-
-    // Adds a specified number of temporary players to the game.
-    private void addTempPlayers(int numPlayers) {
-        for(int i = 0; i < numPlayers; i++) {
-            // Generate a unique name for each temporary player.
-            String tempName = "Template#" + i;
-            // Add the temporary player to the list of players still in the game.
-            listPlayersRemainingGame.add(new TemplatePlayer(tempName));
-        }
-    }
-
-    // Adds a specified number of simple NPC players to the game.
-    private void addSimpleNPCs(int numPlayers) {
-        for(int i = 0; i < numPlayers; i++) {
-            // Generate a unique name for each simple NPC player.
-            String tempName = "Simple#" + i;
-            // Add the simple NPC player to the list of players still in the game.
-            listPlayersRemainingGame.add(new SimpleNPCPlayer(tempName));
-        }
-    }
-
-    // Adds a specified number of random NPC players to the game.
-    private void addRandomNPCs(int numPlayers) {
-        for(int i = 0; i < numPlayers; i++) {
-            // Generate a unique name for each random NPC player.
-            String tempName = "Random#" + i;
-            // Add the random NPC player to the list of players still in the game.
-            listPlayersRemainingGame.add(new RandomPlayer(tempName));
-        }
-    }
-
-    // Adds a specified number of random NPC players to the game.
-    private void addConservativeNPCs(int numPlayers) {
-        for(int i = 0; i < numPlayers; i++) {
-            // Generate a unique name for each random NPC player.
-            String tempName = "Conversative#" + i;
-            // Add the random NPC player to the list of players still in the game.
-            listPlayersRemainingGame.add(new ConservativeNPCPlayer(tempName));
-        }
     }
 
     // Pauses the game for a specified number of milliseconds.

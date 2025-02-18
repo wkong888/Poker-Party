@@ -10,8 +10,8 @@ public class TemplatePlayer extends Player {
 
     @Override
     public void takePlayerTurn() {
-        if(shouldFold()) {
-            fold();
+        if(shouldAllIn()) {
+            allIn();
         }
         else if(shouldCheck()) {
             check();
@@ -23,7 +23,7 @@ public class TemplatePlayer extends Player {
             raise(getGameState().getTableMinBet());
         }
         else if(shouldAllIn()) {
-            allIn();
+            fold();
         }
 
     }
@@ -35,6 +35,9 @@ public class TemplatePlayer extends Player {
 
     @Override
     public boolean shouldCheck() {
+//        if(!getGameState().isActiveBet()){
+//            return true;
+//        }
         return false;
     }
 
@@ -45,7 +48,13 @@ public class TemplatePlayer extends Player {
 
     @Override
     public boolean shouldRaise() {
-        return true;
+        if(getGameState().isActiveBet()){
+            if(getBank()>(getGameState().getTableBet()*2)){
+                return true;
+            }
+
+        }
+        return false;
     }
 
     @Override
